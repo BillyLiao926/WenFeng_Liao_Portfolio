@@ -13,6 +13,11 @@ const setHeaderState = () => {
 setHeaderState();
 window.addEventListener("scroll", setHeaderState, { passive: true });
 
+const closeMenu = () => {
+  menuToggle?.setAttribute("aria-expanded", "false");
+  header.classList.remove("menu-open");
+};
+
 const finishIntro = () => {
   document.body.classList.remove("is-loading");
   intro?.setAttribute("aria-hidden", "true");
@@ -38,9 +43,29 @@ menuToggle?.addEventListener("click", () => {
 
 navLinks.forEach((link) => {
   link.addEventListener("click", () => {
-    menuToggle?.setAttribute("aria-expanded", "false");
-    header.classList.remove("menu-open");
+    closeMenu();
   });
+});
+
+document.addEventListener("click", (event) => {
+  if (!header.classList.contains("menu-open") || header.contains(event.target)) {
+    return;
+  }
+
+  closeMenu();
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    closeMenu();
+  }
+});
+
+window.addEventListener("hashchange", closeMenu);
+window.addEventListener("resize", () => {
+  if (window.innerWidth > 980) {
+    closeMenu();
+  }
 });
 
 const sectionObserver = new IntersectionObserver(
